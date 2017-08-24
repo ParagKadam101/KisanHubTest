@@ -1,17 +1,22 @@
 package weather;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import com.csvreader.CsvWriter;
+
 public class UtilClass {
 	
-	public enum RegionCode {UK, ENGLAND, WALES, SCOTLAND}
-	public enum WeatherParam {MAX_TEMP, MIN_TEMP, MEAN_TEMP, SUNSHINE, RAINFALL}
-    public enum Key {JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC, WIN, SPR, SUM, AUT, ANN}
+	public static enum RegionCode {UK, ENGLAND, WALES, SCOTLAND}
+	public static enum WeatherParam {MAX_TEMP, MIN_TEMP, MEAN_TEMP, SUNSHINE, RAINFALL}
+    public static enum Key {JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC, WIN, SPR, SUM, AUT, ANN}
 	static class Constants
 	{
 		public static final String UK_MAX_URL = "http://www.metoffice.gov.uk/pub/data/weather/uk/climate/datasets/Tmax/date/UK.txt";
@@ -117,6 +122,7 @@ public class UtilClass {
 		{
 			System.out.println(weather);
 		}
+		writeToCsv(weatherArrayList);
 		return weatherArrayList;
 	}
 	
@@ -151,5 +157,42 @@ public class UtilClass {
 		}
 		
 		return outputString;
+	}
+	
+	private static void writeToCsv(ArrayList<Weather> weatherArrayList)
+	{
+		String outputFile = "weather.csv";
+		boolean alreadyExists = new File(outputFile).exists();
+			
+		try {
+			CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
+			for(Weather weather:weatherArrayList)
+			{
+				if (!alreadyExists)
+				{
+					csvOutput.write("RegionCode");
+					csvOutput.write("WeatherParam");
+					csvOutput.write("Year");
+					csvOutput.write("Key");
+					csvOutput.write("Value");
+					alreadyExists = true;
+					csvOutput.endRecord();
+				}
+				else
+				{
+					csvOutput.write(weather.getRegionCode());
+					csvOutput.write(weather.getWeatherParam());
+					csvOutput.write(weather.getYear());
+					csvOutput.write(weather.getKey());
+					csvOutput.write(weather.getValue());
+					
+					csvOutput.endRecord();
+				}
+			}
+			
+			csvOutput.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

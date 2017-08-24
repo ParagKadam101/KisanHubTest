@@ -36,30 +36,29 @@ public class MainClass {
 		
 		ArrayList<Input> inputList = new ArrayList<>();
 		inputList.add(ukMinTemp);
-		inputList.add(ukMaxTemp);
-		inputList.add(ukMeanTemp);
-		inputList.add(ukSunshine);
-		inputList.add(ukRainfall);
-		
-		inputList.add(englandMinTemp);
-		inputList.add(englandMaxTemp);
-		inputList.add(englandMeanTemp);
-		inputList.add(englandSunshine);
-		inputList.add(englandRainfall);
-
-		inputList.add(walesMinTemp);
-		inputList.add(walesMaxTemp);
-		inputList.add(walesMeanTemp);
-		inputList.add(walesSunshine);
-		inputList.add(walesRainfall);
-		
-		inputList.add(scotlandMinTemp);
-		inputList.add(scotlandMaxTemp);
-		inputList.add(scotlandMeanTemp);
-		inputList.add(scotlandSunshine);
-		inputList.add(scotlandRainfall);
+//		inputList.add(ukMaxTemp);
+//		inputList.add(ukMeanTemp);
+//		inputList.add(ukSunshine);
+//		inputList.add(ukRainfall);
+//		
+//		inputList.add(englandMinTemp);
+//		inputList.add(englandMaxTemp);
+//		inputList.add(englandMeanTemp);
+//		inputList.add(englandSunshine);
+//		inputList.add(englandRainfall);
+//
+//		inputList.add(walesMinTemp);
+//		inputList.add(walesMaxTemp);
+//		inputList.add(walesMeanTemp);
+//		inputList.add(walesSunshine);
+//		inputList.add(walesRainfall);
+//		
+//		inputList.add(scotlandMinTemp);
+//		inputList.add(scotlandMaxTemp);
+//		inputList.add(scotlandMeanTemp);
+//		inputList.add(scotlandSunshine);
+//		inputList.add(scotlandRainfall);
 		
 		UtilClass.getWeatherData(inputList);
 	}
-
 }
