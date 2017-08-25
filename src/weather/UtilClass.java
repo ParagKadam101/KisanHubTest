@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -14,7 +16,7 @@ import com.csvreader.CsvWriter;
 
 public class UtilClass {
 	
-	public static enum RegionCode {UK, ENGLAND, WALES, SCOTLAND}
+	public static enum RegionCode {UK, ENGLAND, WALES, SCOTLAND} // Add more as and when required
 	public static enum WeatherParam {MAX_TEMP, MIN_TEMP, MEAN_TEMP, SUNSHINE, RAINFALL}
     public static enum Key {JAN, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC, WIN, SPR, SUM, AUT, ANN}
 	static class Constants
@@ -80,62 +82,70 @@ public class UtilClass {
 		}
 	}
 	
-	public static ArrayList<Weather> getWeatherData(ArrayList<Input> inputList) throws Exception
+	public static ArrayList<Weather> getWeatherData(ArrayList<Input> inputList) 
 	{
 		ArrayList<Weather> weatherArrayList = new ArrayList<>();
 		
 		for(Input input : inputList)
 		{
-			URL obj = new URL(urlResolver(input.regionCode.name(), input.weatherParam.name()));
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-			con.setRequestMethod("GET");
-			final String USER_AGENT = "Mozilla/5.0";
-			con.setRequestProperty("User-Agent", USER_AGENT);
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			String inputLine;
+			URL obj;
+			try {
+				obj = new URL(urlResolver(input.regionCode.name(), input.weatherParam.name()));
+				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+				con.setRequestMethod("GET");
+				final String USER_AGENT = "Mozilla/5.0";
+				con.setRequestProperty("User-Agent", USER_AGENT);
+				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+				String inputLine;
 
-			ArrayList<String> linesArrayList = new ArrayList<>();
-			while ((inputLine = in.readLine()) != null) {
-				linesArrayList.add(inputLine);
-			}
-			String[] lines = linesArrayList.toArray(new String[0]);
-			in.close();
-			
-			String year = "", value, key;
-			
-			for(int i = 8; i < lines.length; i++)
-			{	
-				StringTokenizer st = new StringTokenizer(validateLine(lines[i])," ");
-				if(st.hasMoreTokens())
-				{
-					year = st.nextToken();	
+				ArrayList<String> linesArrayList = new ArrayList<>();
+				while ((inputLine = in.readLine()) != null) {
+					linesArrayList.add(inputLine);
 				}
-				for(Key tempKey : Key.values())
-				{
-					key = tempKey.name();
-					value = st.nextToken();
-					weatherArrayList.add(new Weather(input.regionCode.name(), input.weatherParam.name(), year, key, value));
+				String[] lines = linesArrayList.toArray(new String[0]); // Got raw lines from the Url
+				in.close();
+				String year = "", value, key;
+				
+				for(int i = 8; i < lines.length; i++)
+				{	
+					StringTokenizer st = new StringTokenizer(validateLine(lines[i])," ");
+					if(st.hasMoreTokens())
+					{
+						year = st.nextToken();	// First token will always be the Year which will remain common for all (key,value) in that row
+					}
+					for(Key tempKey : Key.values()) 
+					{
+						key = tempKey.name();
+						value = st.nextToken();
+						weatherArrayList.add(new Weather(input.regionCode.name(), input.weatherParam.name(), year, key, value));
+					}
 				}
+				
 			}
-		}
-		for(Weather weather:weatherArrayList)
-		{
-			System.out.println(weather);
+			
+			 catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (ProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 		}
 		writeToCsv(weatherArrayList);
 		return weatherArrayList;
 	}
 	
+	// This will replace blank data and '---' in the line with N/A
 	public static String validateLine(String line)
 	{
 		char[] lineCharArray = line.toCharArray();
-		int count = 0;
+		int count = 0; // number of consecutive spaces in between values
 		for(int i = 0; i < lineCharArray.length; i++)
 		{
 			if(lineCharArray[i] == ' ')
 			{
 				count++;
-				if(count > 4)  // We assume that the MAX number of spaces in between two values cannot be more than 4
+				if(count > 4)  // We assume that the MAX number of spaces in between two values cannot be more than 4, if more than 4 than it means that a value is missing
 				{
 					lineCharArray[i] = 'N';
 					lineCharArray[i+1] = '/';
@@ -152,7 +162,7 @@ public class UtilClass {
 		
 		String outputString = new String(lineCharArray);
 		StringTokenizer st = new StringTokenizer(outputString," ");
-		for(int i = 0; i< (18 - st.countTokens()); i++)
+		for(int i = 0; i< (18 - st.countTokens()); i++) // We make sure that every line has 18 tokens, if less then add required number N/A at the end 
 		{
 			outputString += "   N/A"; 
 		}
@@ -160,15 +170,15 @@ public class UtilClass {
 		return outputString;
 	}
 	
-	private static void writeToCsv(ArrayList<Weather> weatherArrayList) throws Exception
+	private static void writeToCsv(ArrayList<Weather> weatherArrayList) // 'weather.csv' file gets created at the root of the project 
 	{
 		String outputFile = "weather.csv";
 		boolean alreadyExists = new File(outputFile).exists();
 		
 		try {
-			CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
+			CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, false), ','); // false makes sure that the file is emptied on everytime and not appended this function executes
 			
-				if (!alreadyExists)
+				if (!alreadyExists) // Add header to the output csv here
 				{
 					csvOutput.write("RegionCode");
 					csvOutput.write("WeatherParam");
@@ -190,6 +200,7 @@ public class UtilClass {
 				}	
 				
 				csvOutput.close();
+				System.out.println("Please check weather.csv file at the root path of the project");
 			}
 		
 	   catch (IOException e) 

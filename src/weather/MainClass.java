@@ -5,9 +5,8 @@ import weather.UtilClass.RegionCode;
 import weather.UtilClass.WeatherParam;
 
 public class MainClass {
-	public static void main(String[] args)throws Exception {
+	public static void main(String[] args) {
 	
-		
 		Input ukMinTemp = new Input(RegionCode.UK, WeatherParam.MIN_TEMP);
 		Input ukMaxTemp = new Input(RegionCode.UK, WeatherParam.MAX_TEMP);
 		Input ukMeanTemp = new Input(RegionCode.UK, WeatherParam.MEAN_TEMP);
@@ -31,6 +30,8 @@ public class MainClass {
 		Input scotlandMeanTemp = new Input(RegionCode.SCOTLAND, WeatherParam.MEAN_TEMP);
 		Input scotlandSunshine = new Input(RegionCode.SCOTLAND, WeatherParam.SUNSHINE);
 		Input scotlandRainfall = new Input(RegionCode.SCOTLAND, WeatherParam.RAINFALL);
+		
+		// Add more as and when required
 		
 		
 		
