@@ -33,8 +33,6 @@ public class MainClass {
 		
 		// Add more as and when required
 		
-		
-		
 		ArrayList<Input> inputList = new ArrayList<>();
 		inputList.add(ukMinTemp);
 		inputList.add(ukMaxTemp);
@@ -60,6 +58,8 @@ public class MainClass {
 		inputList.add(scotlandSunshine);
 		inputList.add(scotlandRainfall);
 		
+		System.out.println("Downloading data please wait..");
 		UtilClass.getWeatherData(inputList);
+		
 	}
 }

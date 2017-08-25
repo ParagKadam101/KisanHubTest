@@ -11,5 +11,4 @@ public class Input {
 		this.regionCode = regionCode;
 		this.weatherParam = weatherParam;
 	}
-	
 }

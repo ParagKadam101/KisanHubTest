@@ -200,7 +200,7 @@ public class UtilClass {
 				}	
 				
 				csvOutput.close();
-				System.out.println("Please check weather.csv file at the root path of the project");
+				System.out.println("Data Downloaded, please check weather.csv file at the root path of the project");
 			}
 		
 	   catch (IOException e) 
