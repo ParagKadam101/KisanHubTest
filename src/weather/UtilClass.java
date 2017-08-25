@@ -109,7 +109,7 @@ public class UtilClass {
 				if(st.hasMoreTokens())
 				{
 					year = st.nextToken();	
-									}
+				}
 				for(Key tempKey : Key.values())
 				{
 					key = tempKey.name();
@@ -140,6 +140,7 @@ public class UtilClass {
 					lineCharArray[i] = 'N';
 					lineCharArray[i+1] = '/';
 					lineCharArray[i+2] = 'A';
+					lineCharArray[i+3] = ' ';
 					count = 0;
 				}
 			}
@@ -159,15 +160,14 @@ public class UtilClass {
 		return outputString;
 	}
 	
-	private static void writeToCsv(ArrayList<Weather> weatherArrayList)
+	private static void writeToCsv(ArrayList<Weather> weatherArrayList) throws Exception
 	{
 		String outputFile = "weather.csv";
 		boolean alreadyExists = new File(outputFile).exists();
-			
+		
 		try {
-			CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, true), ',');
-			for(Weather weather:weatherArrayList)
-			{
+			CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
+			
 				if (!alreadyExists)
 				{
 					csvOutput.write("RegionCode");
@@ -178,21 +178,23 @@ public class UtilClass {
 					alreadyExists = true;
 					csvOutput.endRecord();
 				}
-				else
+				
+				for(Weather weather:weatherArrayList)
 				{
 					csvOutput.write(weather.getRegionCode());
 					csvOutput.write(weather.getWeatherParam());
 					csvOutput.write(weather.getYear());
 					csvOutput.write(weather.getKey());
 					csvOutput.write(weather.getValue());
-					
 					csvOutput.endRecord();
-				}
+				}	
+				
+				csvOutput.close();
 			}
-			
-			csvOutput.close();
-		} catch (IOException e) {
+		
+	   catch (IOException e) 
+	   {
 			e.printStackTrace();
-		}
+	   }
 	}
 }
